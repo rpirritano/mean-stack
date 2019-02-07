@@ -2,16 +2,36 @@
 <!-- <textarea rows="6" [value]="newPost" #postInput></textarea> -->
 
 <!-- use two-way binding with ng-model-->
+<!-- With forms dont need to use two way binding (but can) but no need to since Form keeps track
+ with ngModule, and add a name value-->
 <mat-card>
-  <mat-form-field>
-    <input matInput type="text" [(ngModel)]="enteredTitle">
-  </mat-form-field>
-  <mat-form-field>
-    <textarea matInput rows="6" [(ngModel)]="enteredContent"></textarea>
-  </mat-form-field>
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="onPostAdded()">Save</button>
+  <form (submit)="onAddPost(postForm)" #postForm="ngForm"> <!--how to get access of values inside form-->
+    <mat-form-field>
+     <input
+        matInput
+        type="text"
+        name="title"
+        ngModel
+        required
+        minlength = "3"
+        #title="ngModel">
+        <mat-error *ngIf="title.invalid">Please Enter a Post Title!</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+     <textarea
+        matInput
+        rows="4"
+        name = "content"
+        ngModel
+        required
+        #content="ngModel">
+      </textarea>
+      <mat-error *ngIf="content.invalid">Please Enter Content!</mat-error>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      type="Submit">Save Post</button>
+  </form>
 </mat-card>
 

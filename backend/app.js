@@ -1,17 +1,27 @@
-const express = require('express');
+const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+
+const Post = require('./models/post');
 
 const app = express();
 
+mongoose.connect("mongodb+srv://rpirritano:Green1212!@cluster0-b4zvy.mongodb.net/node-angular?retryWrites=true")
+  .then(() => {
+    console.log('Connected to database!');
+  })
+  .catch(() => {
+    console.log('Connection failed!');
+  });
+
 app.use(bodyParser.json());
-// not needed but just to show it can do more
-app,use(bodyParser.urlencoded({ extended: fasle }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin", "X-Requested-Width, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -20,31 +30,25 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post("api/posts", (req, res, next) => {
-  const post = req.body; //this is from importing body-parser
-  console.log(post);
+app.post("/api/posts", (req, res, next) => {
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  });
+  post.save();
   res.status(201).json({
     message: 'Post added successfully'
   });
 });
 
-app.use("/api/posts", (req, res, next) => {
-  const posts = [
-    {
-      id: '1',
-      title: "First server-side post",
-      content: "This is coming from the server"
-    },
-    {
-      id: '2',
-      title: "Second server-side post",
-      content: "This is coming from the server"
-    }
-  ];
-  res.status(200).json({
-    message: 'Posts fetched successfully!',
-    posts: posts
+app.get("/api/posts", (req, res, next) => {
+  Post.find().then(documents => {
+    res.status(200).json({
+      message: "Posts fetched successfully!",
+      posts: documents
+    });
   });
+
 });
 
 module.exports = app;

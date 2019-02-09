@@ -22,9 +22,10 @@ export class PostListComponent implements OnInit, OnDestroy { // OnInit is lifec
 constructor(public postsService: PostsService) {}
 
  ngOnInit() {
-  this.posts = this.postsService.getPosts();
-  this.postsSub = this.postsService.getPostUpdateListerner().subscribe((posts: Post[]) => {
-    this.posts = posts;
+  this.postsService.getPosts();
+  this.postsSub = this.postsService.getPostUpdateListerner()
+    .subscribe((posts: Post[]) => {
+      this.posts = posts;
   });
  }
 
